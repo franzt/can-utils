@@ -121,7 +121,8 @@ void print_usage(char *prg)
 	fprintf(stderr, "         -n <count>  (terminate after receiption of <count> CAN frames)\n");
 	fprintf(stderr, "         -r <size>   (set socket receive buffer to <size>)\n");
 	fprintf(stderr, "         -d          (monitor dropped CAN frames)\n");
-	fprintf(stderr, "         -e          (dump CAN error frames in human-readable format)\n");
+	fprintf(stderr, "         -e          (dump CAN error frames in human-readable format)\n")
+	fprintf(stderr, "         -E          (dump CAN error frames in Emotion format)\n");
 	fprintf(stderr, "         -x          (print extra message infos, rx/tx brs esi)\n");
 	fprintf(stderr, "         -T <msecs>  (terminate after <msecs> without any reception)\n");
 	fprintf(stderr, "\n");
@@ -273,6 +274,11 @@ int main(int argc, char **argv)
 		case 'e':
 			view |= CANLIB_VIEW_ERROR;
 			break;
+		
+		case 'E':
+			view |= CANLIB_VIEW_ERROR2;
+			break;
+
 
 		case 's':
 			silent = atoi(optarg);
