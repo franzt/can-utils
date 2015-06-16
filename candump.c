@@ -121,7 +121,7 @@ void print_usage(char *prg)
 	fprintf(stderr, "         -n <count>  (terminate after receiption of <count> CAN frames)\n");
 	fprintf(stderr, "         -r <size>   (set socket receive buffer to <size>)\n");
 	fprintf(stderr, "         -d          (monitor dropped CAN frames)\n");
-	fprintf(stderr, "         -e          (dump CAN error frames in human-readable format)\n")
+	fprintf(stderr, "         -e          (dump CAN error frames in human-readable format)\n");
 	fprintf(stderr, "         -E          (dump CAN error frames in Emotion format)\n");
 	fprintf(stderr, "         -x          (print extra message infos, rx/tx brs esi)\n");
 	fprintf(stderr, "         -T <msecs>  (terminate after <msecs> without any reception)\n");
@@ -216,6 +216,7 @@ int main(int argc, char **argv)
 	unsigned char view = 0;
 	unsigned char log = 0;
 	unsigned char logfrmt = 0;
+	unsigned char emotion=0;
 	int count = 0;
 	int rcvbuf_size = 0;
 	int opt, ret;
@@ -275,9 +276,6 @@ int main(int argc, char **argv)
 			view |= CANLIB_VIEW_ERROR;
 			break;
 		
-		case 'E':
-			view |= CANLIB_VIEW_ERROR2;
-			break;
 
 
 		case 's':
@@ -346,7 +344,9 @@ int main(int argc, char **argv)
 		case 'L':
 			logfrmt = 1;
 			break;
-
+		case 'E':
+			emotion = 1;
+			break;	
 		case 'n':
 			count = atoi(optarg);
 			if (count < 1) {
@@ -386,7 +386,11 @@ int main(int argc, char **argv)
 		exit(0);
 	}
 	
-	if (logfrmt && view) {
+
+
+
+
+	if ((logfrmt||emotion) && view) {
 		fprintf(stderr, "Log file format selected: Please disable ASCII/BINARY/SWAP options!\n");
 		exit(0);
 	}
@@ -730,6 +734,14 @@ int main(int argc, char **argv)
 					       max_devname_len, devname[idx], buf);
 					goto out_fflush; /* no other output to stdout */
 				}
+				if (emotion) {
+                                        char buf[CL_CFSZ]; /* max length */
+
+                                        /* print CAN frame in log file style to stdout */
+                                        sprint_canframe(buf, &frame, 0, maxdlen);
+                                        printf("%s\n",  buf);
+                                        goto out_fflush; /* no other output to stdout */
+                                }
 
 				if (silent != SILENT_OFF){
 					if (silent == SILENT_ANI) {

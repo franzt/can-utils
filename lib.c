@@ -305,6 +305,8 @@ void fprint_long_canframe(FILE *stream , struct canfd_frame *cf, char *eol, int 
 		snprintf_can_error_frame(buf, sizeof(buf), cf, "\n\t");
 		fprintf(stream, "\n\t%s", buf);
 	}
+
+
 	if (eol)
 		fprintf(stream, "%s", eol);
 }
